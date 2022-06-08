@@ -2,9 +2,12 @@ jsonUrl = 'https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1
 
 function init() {
     d3.json(jsonUrl).then(function (contents) {
+        // store all subject IDs in an array
         let subjectIds = contents['names'];
+        
         let dropdownMenu = d3.select("#selDataset");
 
+        // loop through subject IDs and create dropdown menu option for each
         for (let i = 0; i < subjectIds.length; i++) {
             dropdownMenu.append('option').text(subjectIds[i]);
         };
@@ -12,7 +15,7 @@ function init() {
 
         // let subjectId = dropdownMenu.text();
         // console.log(subjectId);
-        let subjectId = '941';
+        let subjectId = '940';
         let subjectData = contents['samples'].filter((item) => item.id === subjectId);
 
         console.log(subjectData);
@@ -30,7 +33,17 @@ function init() {
         let layout = {
             title : 'Test'
         };
-        Plotly.newPlot("bar",data,layout)
+        Plotly.newPlot("bar",data,layout);
+
+        // filter metadata to retain info for relevant subject ID
+        let subjectMeta = contents['metadata'].filter((item) => item.id === parseInt(subjectId));
+        // iterate through number of keys in object and append paragraph for each key-value pair
+        for (let i = 0; i < Object.keys(subjectMeta[0]).length;i++) {
+            d3.select('#sample-metadata')
+                .append('p')
+                .text(`${Object.keys(subjectMeta[0])[i]}: ${subjectMeta[0][Object.keys(subjectMeta[0])[i]]}`);
+        };
+
     });
 };
 
